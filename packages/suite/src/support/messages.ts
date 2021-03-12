@@ -872,6 +872,10 @@ const definedMessages = defineMessages({
         description: 'Shows advanced coin settings',
         id: 'TR_ADVANCED_SETTINGS',
     },
+    TR_ONBOARDING_ALLOW_ANALYTICS: {
+        defaultMessage: 'Allow anonymous data storing',
+        id: 'TR_ONBOARDING_ALLOW_ANALYTICS',
+    },
     TR_ALLOW_ANALYTICS: {
         defaultMessage: 'Allow anonymous data storing',
         id: 'TR_ALLOW_ANALYTICS',
@@ -1590,6 +1594,15 @@ const definedMessages = defineMessages({
     TR_HELP_TREZOR_SUITE_TEXT_2: {
         defaultMessage: 'Trezor Suite does NOT track any balance-related or personal data.',
         id: 'TR_HELP_TREZOR_SUITE_TEXT_2',
+    },
+    TR_ONBOARDING_DATA_COLLECTION_HEADING: {
+        id: 'TR_ONBOARDING_DATA_COLLECTION_HEADING',
+        defaultMessage: 'Anonymous data collection',
+    },
+    TR_ONBOARDING_DATA_COLLECTION_DESCRIPTION: {
+        id: 'TR_ONBOARDING_DATA_COLLECTION_DESCRIPTION',
+        defaultMessage:
+            'All data is anonymous and only for product development purposes. Read more in <a>Terms & Conditions</a>.',
     },
     TR_HIDE_ADVANCED_OPTIONS: {
         defaultMessage: 'Hide advanced options',
@@ -5465,6 +5478,42 @@ const definedMessages = defineMessages({
     TR_WAIT_FOR_REBOOT_WEBUSB_DESCRIPTION: {
         id: 'TR_WAIT_FOR_REBOOT_WEBUSB_DESCRIPTION',
         defaultMessage: 'Please wait for Trezor to reboot and pair the device again.',
+    },
+    TR_ONBOARDING_STEP_FIRMWARE: {
+        id: 'TR_ONBOARDING_STEP_FIRMWARE',
+        defaultMessage: 'Firmware',
+    },
+    TR_ONBOARDING_STEP_WALLET: {
+        id: 'TR_ONBOARDING_STEP_WALLET',
+        defaultMessage: 'Wallet',
+    },
+    TR_ONBOARDING_STEP_PIN: {
+        id: 'TR_ONBOARDING_STEP_PIN',
+        defaultMessage: 'PIN',
+    },
+    TR_ONBOARDING_STEP_COINS: {
+        id: 'TR_ONBOARDING_STEP_COINS',
+        defaultMessage: 'Coins',
+    },
+    TR_ONBOARDING_CURRENT_VERSION: {
+        id: 'TR_ONBOARDING_CURRENT_VERSION',
+        defaultMessage: 'Current Version',
+    },
+    TR_ONBOARDING_NEW_VERSION: {
+        id: 'TR_ONBOARDING_NEW_VERSION',
+        defaultMessage: 'New Version',
+    },
+    TR_PIN_MATRIX_DISPLAYED_ON_TREZOR: {
+        id: 'TR_PIN_MATRIX_DISPLAYED_ON_TREZOR',
+        defaultMessage: 'The numbers are displayed on your Trezor',
+    },
+    TR_DEVICE_CONNECTED: {
+        id: 'TR_DEVICE_CONNECTED',
+        defaultMessage: 'Device connected',
+    },
+    TR_DEVICE_CONNECTED_WRONG_STATE: {
+        id: 'TR_DEVICE_CONNECTED_WRONG_STATE',
+        defaultMessage: 'Device detected, but there is a problem ',
     },
 } as const);
 
