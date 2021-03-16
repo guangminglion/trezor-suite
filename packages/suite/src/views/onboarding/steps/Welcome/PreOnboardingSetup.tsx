@@ -9,7 +9,7 @@ interface Props {
 
 const PreOnboardingSetup = ({ initialized }: Props) => {
     // TODO typed substeps
-    const { activeSubStep } = useSelector(state => state.onboarding);
+    const { activeSubStep } = useOnboarding();
 
     if (activeSubStep === 'security-check') {
         // 2nd substep
