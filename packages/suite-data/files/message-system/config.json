@@ -67,16 +67,6 @@
                         "en-GB": "Update now",
                         "de-DE": "Jetzt aktualisieren"
                     }
-                },
-                "modal": {
-                    "title": {
-                        "en-GB": "Update now",
-                        "de-DE": "Jetzt aktualisieren"
-                    },
-                    "image": "https://example.com/example.png"
-                },
-                "context": {
-                    "domain": ["coins.*.receive", "coins.btc"]
                 }
             }
         }

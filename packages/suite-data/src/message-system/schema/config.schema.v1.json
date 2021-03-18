@@ -112,21 +112,6 @@
                                         "$ref": "#/definitions/version"
                                     }
                                 },
-                                "settings": {
-                                    "type": "array",
-                                    "minItems": 1,
-                                    "items": {
-                                        "title": "Settings",
-                                        "description": "If a setting is not specified, then it can be either true or false. Currently, 'tor' and coin symbols are supported.",
-                                        "type": "object",
-                                        "properties": {
-                                            "tor": {
-                                                "type": "boolean"
-                                            }
-                                        },
-                                        "additionalProperties": true
-                                    }
-                                },
                                 "transport": {
                                     "title": "Transport",
                                     "type": "object",
@@ -141,6 +126,21 @@
                                     },
                                     "additionalProperties": {
                                         "$ref": "#/definitions/version"
+                                    }
+                                },
+                                "settings": {
+                                    "type": "array",
+                                    "minItems": 1,
+                                    "items": {
+                                        "title": "Settings",
+                                        "description": "If a setting is not specified, then it can be either true or false. Currently, 'tor' and coin symbols are supported.",
+                                        "type": "object",
+                                        "properties": {
+                                            "tor": {
+                                                "type": "boolean"
+                                            }
+                                        },
+                                        "additionalProperties": true
                                     }
                                 },
                                 "devices": {

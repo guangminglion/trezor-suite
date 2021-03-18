@@ -27,6 +27,10 @@
                         "chrome": "*",
                         "chromium": "!"
                     },
+                    "transport": {
+                        "bridge": ["2.0.30", "2.0.27"],
+                        "webusbplugin": "*"
+                    },
                     "settings": [
                         {
                             "tor": true,
@@ -37,10 +41,6 @@
                             "ltc": true
                         }
                     ],
-                    "transport": {
-                        "bridge": ["2.0.30", "2.0.27"],
-                        "webusbplugin": "*"
-                    },
                     "devices": [
                         {
                             "model": "1",
@@ -67,16 +67,6 @@
                         "en-GB": "Update now",
                         "de-DE": "Jetzt aktualisieren"
                     }
-                },
-                "modal": {
-                    "title": {
-                        "en-GB": "Update now",
-                        "de-DE": "Jetzt aktualisieren"
-                    },
-                    "image": "https://example.com/example.png"
-                },
-                "context": {
-                    "domain": ["coins.*.receive", "coins.btc"]
                 }
             }
         }

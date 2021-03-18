@@ -9,11 +9,13 @@
     "license": "SEE LICENSE IN LICENSE.md",
     "description": "Trezor data",
     "scripts": {
-        "build": "yarn build:browser-detection && yarn message-system",
+        "build": "yarn build:browser-detection && yarn msg-system-types",
         "build:browser-detection": "webpack --config ./browser-detection.webpack.js",
         "copy-static-files": "yarn build && ts-node ./index.ts",
         "test-same-svgs": "ts-node ./test/test-same-svgs.ts",
-        "message-system": "ts-node ./src/message-system/index.ts"
+        "msg-system-types": "ts-node ./src/message-system/scripts/generate-types.ts",
+        "msg-system-validate-config": "ts-node ./src/message-system/scripts/validate-config.ts",
+        "msg-system-sign-config": "ts-node ./src/message-system/scripts/sign-config.ts"
     },
     "dependencies": {
         "ua-parser-js": "^0.7.24"
