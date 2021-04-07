@@ -149,4 +149,5 @@ export const getOsTheme = (): SuiteThemeVariant => {
     return 'light';
 };
 
-export const getOSVersion = () => window.desktopApi?.getOSVersion();
+/* Usable only in desktop app */
+export const getOsType = () => window.desktopApi?.getOsType();
