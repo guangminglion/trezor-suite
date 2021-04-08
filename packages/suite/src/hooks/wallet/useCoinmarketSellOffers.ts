@@ -1,19 +1,16 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import invityAPI from '@suite-services/invityAPI';
-import { useActions, useSelector, useDevice, useTranslation } from '@suite-hooks';
+import { useActions, useSelector, useDevice } from '@suite-hooks';
 import { useTimer } from '@suite-hooks/useTimeInterval';
 import { BankAccount, SellFiatTrade } from 'invity-api';
 import { processQuotes, createQuoteLink } from '@wallet-utils/coinmarket/sellUtils';
 import * as coinmarketCommonActions from '@wallet-actions/coinmarket/coinmarketCommonActions';
 import * as coinmarketSellActions from '@wallet-actions/coinmarketSellActions';
-import * as sendFormActions from '@wallet-actions/sendFormActions';
 import * as routerActions from '@suite-actions/routerActions';
 import { Props, ContextValues, SellStep } from '@wallet-types/coinmarketSellOffers';
 import * as notificationActions from '@suite-actions/notificationActions';
-import { DEFAULT_VALUES, DEFAULT_PAYMENT } from '@wallet-constants/sendForm';
-import { FormState, UseSendFormState } from '@wallet-types/sendForm';
-import { getFeeLevels } from '@wallet-utils/sendFormUtils';
 import { useInvityAPI } from '@wallet-hooks/useCoinmarket';
+import { useCoinmarketRecomposeAndSign } from './useCoinmarketRecomposeAndSign ';
 
 export const useOffers = (props: Props) => {
     const timer = useTimer();
@@ -22,7 +19,7 @@ export const useOffers = (props: Props) => {
 
     const { sellInfo } = useInvityAPI();
 
-    const { account, network } = selectedAccount;
+    const { account } = selectedAccount;
     const { isLocked } = useDevice();
     const [callInProgress, setCallInProgress] = useState<boolean>(isLocked || false);
     const [selectedQuote, setSelectedQuote] = useState<SellFiatTrade>();
@@ -39,8 +36,6 @@ export const useOffers = (props: Props) => {
         saveTransactionId,
         submitRequestForm,
         goto,
-        composeAction,
-        signAction,
     } = useActions({
         saveTrade: coinmarketSellActions.saveTrade,
         setIsFromRedirect: coinmarketSellActions.setIsFromRedirect,
@@ -49,22 +44,17 @@ export const useOffers = (props: Props) => {
         saveTransactionId: coinmarketSellActions.saveTransactionId,
         submitRequestForm: coinmarketCommonActions.submitRequestForm,
         goto: routerActions.goto,
-        composeAction: sendFormActions.composeTransaction,
-        signAction: sendFormActions.signTransaction,
     });
 
-    const { invityAPIUrl, composed, selectedFee, fees, isFromRedirect } = useSelector(state => ({
+    const { invityAPIUrl, isFromRedirect } = useSelector(state => ({
         invityAPIUrl: state.suite.settings.debug.invityAPIUrl,
-        composed: state.wallet.coinmarket.composedTransactionInfo.composed,
-        selectedFee: state.wallet.coinmarket.composedTransactionInfo.selectedFee,
-        fees: state.wallet.fees,
         isFromRedirect: state.wallet.coinmarket.sell.isFromRedirect,
     }));
     if (invityAPIUrl) {
         invityAPI.setInvityAPIServer(invityAPIUrl);
     }
 
-    const { translationString } = useTranslation();
+    const { recomposeAndSign } = useCoinmarketRecomposeAndSign();
 
     useEffect(() => {
         if (!quotesRequest) {
@@ -177,65 +167,13 @@ export const useOffers = (props: Props) => {
             selectedQuote &&
             selectedQuote.orderId &&
             selectedQuote.destinationAddress &&
-            selectedQuote.cryptoStringAmount &&
-            composed
+            selectedQuote.cryptoStringAmount
         ) {
-            // prepare the fee levels, set custom values from composed
-            // WORKAROUND: sendFormEthereumActions and sendFormRippleActions use form outputs instead of composed transaction data
-            const formValues: FormState = {
-                ...DEFAULT_VALUES,
-                outputs: [
-                    {
-                        ...DEFAULT_PAYMENT,
-                        address: selectedQuote.destinationAddress,
-                        amount: selectedQuote.cryptoStringAmount,
-                    },
-                ],
-                selectedFee,
-                feePerUnit: composed.feePerByte,
-                feeLimit: composed.feeLimit || '',
-                estimatedFeeLimit: composed.estimatedFeeLimit,
-                options: ['broadcast'],
-                rippleDestinationTag: selectedQuote.destinationPaymentExtraId,
-            };
-
-            // prepare form state for composeAction
-            const coinFees = fees[account.symbol];
-            const levels = getFeeLevels(account.networkType, coinFees);
-            const feeInfo = { ...coinFees, levels };
-            const formState = { account, network, feeInfo };
-
-            // compose transaction again to recalculate fees based on real account values
-            const composedLevels = await composeAction(formValues, formState as UseSendFormState);
-            if (!selectedFee || !composedLevels) {
-                addNotification({
-                    type: 'sign-tx-error',
-                    error: 'Missing level',
-                });
-                return;
-            }
-            const composedToSign = composedLevels[selectedFee];
-
-            if (!composedToSign || composedToSign.type !== 'final') {
-                let errorMessage: string | undefined;
-                if (composedToSign?.type === 'error' && composedToSign.errorMessage) {
-                    errorMessage = translationString(
-                        composedToSign.errorMessage.id,
-                        composedToSign.errorMessage.values as { [key: string]: any },
-                    );
-                }
-                if (!errorMessage) {
-                    errorMessage = 'Cannot create transaction';
-                }
-                addNotification({
-                    type: 'sign-tx-error',
-                    error: errorMessage,
-                });
-                return;
-            }
-
-            const result = await signAction(formValues, composedToSign);
-
+            const result = await recomposeAndSign(
+                selectedAccount,
+                selectedQuote.destinationAddress,
+                selectedQuote.cryptoStringAmount,
+            );
             if (result?.success) {
                 // send txid to the server as confirmation
                 const { txid } = result.payload;
