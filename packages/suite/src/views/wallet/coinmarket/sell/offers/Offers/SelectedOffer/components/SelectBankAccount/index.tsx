@@ -205,7 +205,7 @@ const SelectBankAccount = () => {
                     onClick={() => {
                         if (bankAccount) confirmTrade(bankAccount);
                     }}
-                    isDisabled={callInProgress}
+                    isDisabled={callInProgress || !bankAccount}
                 >
                     <Translation id="TR_SELL_GO_TO_TRANSACTION" />
                 </Button>

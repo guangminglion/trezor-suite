@@ -17,11 +17,7 @@ const Wrapper = styled.div`
 `;
 
 const DetailIndexLoaded = (props: Props) => {
-    const { selectedAccount } = props;
-    const coinmarketSellContextValues = useCoinmarketSellDetail({
-        ...props,
-        selectedAccount,
-    });
+    const coinmarketSellContextValues = useCoinmarketSellDetail(props);
 
     return (
         <CoinmarketSellDetailContext.Provider value={coinmarketSellContextValues}>

@@ -60,11 +60,10 @@ const WaitingForPayment = ({ transactionId, trade, account }: Props) => {
     const goToPayment = async () => {
         setIsWorking(true);
         const returnUrl = await createTxLink(trade, account);
-        invityAPI.getBuyTradeForm({ trade, returnUrl }).then(response => {
-            if (response) {
-                submitRequestForm(response.form);
-            }
-        });
+        const response = await invityAPI.getBuyTradeForm({ trade, returnUrl });
+        if (response) {
+            submitRequestForm(response.form);
+        }
     };
     // const cancelTrade = () => {};
     return (

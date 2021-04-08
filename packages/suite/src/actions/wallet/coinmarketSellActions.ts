@@ -50,16 +50,16 @@ export const loadSellInfo = async (): Promise<SellInfo> => {
         sellList.providers.forEach(e => (providerInfos[e.name] = e));
     }
 
-    const tradedFiatCurrencies: string[] = [];
-    const tradedCoins: string[] = [];
+    const supportedFiatCurrencies = new Set<string>();
+    const supportedCryptoCurrencies = new Set<string>();
     sellList?.providers.forEach(p => {
         if (p.tradedFiatCurrencies) {
-            tradedFiatCurrencies.push(...p.tradedFiatCurrencies.map(c => c.toLowerCase()));
+            p.tradedFiatCurrencies
+                .map(c => c.toLowerCase())
+                .forEach(c => supportedFiatCurrencies.add(c));
         }
-        tradedCoins.push(...p.tradedCoins.map(c => c.toLowerCase()));
+        p.tradedCoins.map(c => c.toLowerCase()).forEach(c => supportedCryptoCurrencies.add(c));
     });
-    const supportedFiatCurrencies = new Set(tradedFiatCurrencies);
-    const supportedCryptoCurrencies = new Set(tradedCoins);
 
     return {
         sellList,

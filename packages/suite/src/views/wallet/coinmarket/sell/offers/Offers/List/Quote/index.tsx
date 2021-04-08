@@ -142,7 +142,8 @@ const StyledQuestionTooltip = styled(QuestionTooltip)`
 export function getQuoteError(quote: SellFiatTrade, amountInCrypto: boolean) {
     if (quote.error) {
         if (amountInCrypto) {
-            if (quote.minCrypto && Number(quote.cryptoStringAmount) < quote.minCrypto) {
+            const cryptoAmount = Number(quote.cryptoStringAmount);
+            if (quote.minCrypto && cryptoAmount < quote.minCrypto) {
                 return (
                     <Translation
                         id="TR_OFFER_ERROR_MINIMUM_CRYPTO"
@@ -154,7 +155,7 @@ export function getQuoteError(quote: SellFiatTrade, amountInCrypto: boolean) {
                     />
                 );
             }
-            if (quote.maxCrypto && Number(quote.cryptoStringAmount) > quote.maxCrypto) {
+            if (quote.maxCrypto && cryptoAmount > quote.maxCrypto) {
                 return (
                     <Translation
                         id="TR_OFFER_ERROR_MAXIMUM_CRYPTO"
@@ -167,7 +168,8 @@ export function getQuoteError(quote: SellFiatTrade, amountInCrypto: boolean) {
                 );
             }
         } else {
-            if (quote.minFiat && Number(quote.fiatStringAmount) < quote.minFiat) {
+            const fiatAmount = Number(quote.fiatStringAmount);
+            if (quote.minFiat && fiatAmount < quote.minFiat) {
                 return (
                     <Translation
                         id="TR_OFFER_ERROR_MINIMUM_FIAT"
@@ -179,7 +181,7 @@ export function getQuoteError(quote: SellFiatTrade, amountInCrypto: boolean) {
                     />
                 );
             }
-            if (quote.maxFiat && Number(quote.fiatStringAmount) > quote.maxFiat) {
+            if (quote.maxFiat && fiatAmount > quote.maxFiat) {
                 return (
                     <Translation
                         id="TR_OFFER_ERROR_MAXIMUM_FIAT"

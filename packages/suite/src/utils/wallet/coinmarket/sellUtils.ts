@@ -11,8 +11,7 @@ export function getAmountLimits(
 ): AmountLimits | undefined {
     let minAmount: number | undefined;
     let maxAmount: number | undefined;
-    // eslint-disable-next-line no-restricted-syntax
-    for (const quote of quotes) {
+    quotes.forEach(quote => {
         // if at least one quote succeeded do not return any message
         if (!quote.error) {
             return;
@@ -34,7 +33,7 @@ export function getAmountLimits(
                 maxAmount = Math.max(maxAmount || 0, quote.maxFiat);
             }
         }
-    }
+    });
     if (minAmount) {
         if (!maxAmount) {
             return request.amountInCrypto

@@ -117,10 +117,7 @@ const Arrow = styled.div`
 
 const SellTransaction = ({ trade, providers, account }: Props) => {
     const theme = useTheme();
-    const { goto } = useActions({ goto: routerActions.goto });
-    const { saveTransactionDetailId } = useActions({
-        saveTransactionDetailId: coinmarketSellActions.saveTransactionId,
-    });
+    const { goto,saveTransactionDetailId } = useActions({ goto: routerActions.goto, saveTransactionDetailId: coinmarketSellActions.saveTransactionId, });
     useWatchSellTrade(account, trade);
 
     const { date, data } = trade;
@@ -146,8 +143,6 @@ const SellTransaction = ({ trade, providers, account }: Props) => {
         <Wrapper>
             <Column>
                 <Row>
-                    {/* TODO FIX THIS LOGO */}
-                    {/* <StyledCoinLogo size={13} symbol={symbol} /> */}{' '}
                     <HiddenPlaceholder>
                         {formatCryptoAmount(Number(cryptoStringAmount))} {cryptoCurrency}
                     </HiddenPlaceholder>

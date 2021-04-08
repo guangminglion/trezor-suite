@@ -6,11 +6,7 @@ import SellForm from './components/SellForm';
 import { useCoinmarketSellForm, SellFormContext } from '@wallet-hooks/useCoinmarketSellForm';
 
 const CoinmarketSellLoaded = (props: Props) => {
-    const { selectedAccount } = props;
-    const coinmarketSellContextValues = useCoinmarketSellForm({
-        ...props,
-        selectedAccount,
-    });
+    const coinmarketSellContextValues = useCoinmarketSellForm(props);
 
     return (
         <CoinmarketLayout>

@@ -71,7 +71,7 @@ export type Props = {
 };
 
 const CoinmarketSellTerms = ({ decision, onCancel, provider }: Props) => {
-    const [isChecked, setIsChecked] = useState<boolean>(false);
+    const [isChecked, setIsChecked] = useState(false);
     const providerName = provider || 'unknown provider';
 
     return (
