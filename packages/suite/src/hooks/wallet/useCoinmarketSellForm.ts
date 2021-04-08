@@ -151,7 +151,7 @@ export const useCoinmarketSellForm = (props: Props): SellFormContextValues => {
     const defaultCurrency = { label: 'EUR', value: 'eur' };
 
     // sub-hook, FeeLevels handler
-    const { changeFeeLevel } = useFees({
+    const { changeFeeLevel, selectedFee } = useFees({
         defaultValue: 'normal',
         feeInfo,
         onChange: onFeeLevelChange,
@@ -201,8 +201,8 @@ export const useCoinmarketSellForm = (props: Props): SellFormContextValues => {
         if (!composedLevels) return;
         const values = getValues();
         const { setMaxOutputId } = values;
-        const selectedFee = values.selectedFee || 'normal';
-        const composed = composedLevels[selectedFee || 'normal'];
+        const selectedFeeLevel = selectedFee || 'normal';
+        const composed = composedLevels[selectedFeeLevel];
         if (!composed) return;
 
         if (composed.type === 'error') {
@@ -219,10 +219,18 @@ export const useCoinmarketSellForm = (props: Props): SellFormContextValues => {
                 setValue(CRYPTO_INPUT, composed.max, { shouldValidate: true });
                 clearErrors(CRYPTO_INPUT);
             }
-            saveComposedTransactionInfo({ selectedFee, composed });
+            saveComposedTransactionInfo({ selectedFee: selectedFeeLevel, composed });
             setValue('estimatedFeeLimit', composed.estimatedFeeLimit);
         }
-    }, [clearErrors, composedLevels, getValues, saveComposedTransactionInfo, setError, setValue]);
+    }, [
+        clearErrors,
+        composedLevels,
+        getValues,
+        saveComposedTransactionInfo,
+        setError,
+        setValue,
+        selectedFee,
+    ]);
 
     const onSubmit = async () => {
         const formValues = getValues();

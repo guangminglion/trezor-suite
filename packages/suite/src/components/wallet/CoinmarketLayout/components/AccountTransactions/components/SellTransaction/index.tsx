@@ -117,7 +117,10 @@ const Arrow = styled.div`
 
 const SellTransaction = ({ trade, providers, account }: Props) => {
     const theme = useTheme();
-    const { goto,saveTransactionDetailId } = useActions({ goto: routerActions.goto, saveTransactionDetailId: coinmarketSellActions.saveTransactionId, });
+    const { goto, saveTransactionDetailId } = useActions({
+        goto: routerActions.goto,
+        saveTransactionDetailId: coinmarketSellActions.saveTransactionId,
+    });
     useWatchSellTrade(account, trade);
 
     const { date, data } = trade;
