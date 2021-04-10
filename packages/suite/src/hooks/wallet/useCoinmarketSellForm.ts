@@ -98,7 +98,7 @@ export const useCoinmarketSellForm = (props: Props): SellFormContextValues => {
         shouldUnregister: false, // NOTE: tracking custom fee inputs
         defaultValues: { selectedFee: 'normal', feePerUnit: '', feeLimit: '' },
     });
-    const { reset, register, setValue, getValues, setError, clearErrors, watch, trigger } = methods;
+    const { reset, register, setValue, getValues, setError, clearErrors, trigger } = methods;
 
     // react-hook-form auto register custom form fields (without HTMLElement)
     useEffect(() => {
@@ -160,42 +160,44 @@ export const useCoinmarketSellForm = (props: Props): SellFormContextValues => {
     });
 
     // watch change in crypto amount and recalculate fees on change
-    const cryptoAmount = watch(CRYPTO_INPUT);
-    useEffect(() => {
-        if (!cryptoAmount) return;
-        const origValue = getValues(OUTPUT_AMOUNT);
-        if (origValue === cryptoAmount) return;
-        setValue(OUTPUT_AMOUNT, cryptoAmount);
-        composeRequest();
-    }, [composeRequest, cryptoAmount, getValues, setValue]);
+    const onCryptoAmountChange = useCallback(
+        (amount: string) => {
+            if (!amount) return;
+            setValue(FIAT_INPUT, '');
+            setValue('setMaxOutputId', undefined);
+            clearErrors(FIAT_INPUT);
+            const origValue = getValues(OUTPUT_AMOUNT);
+            if (origValue === amount) return;
+            setValue(OUTPUT_AMOUNT, amount);
+            composeRequest();
+        },
+        [clearErrors, composeRequest, getValues, setValue],
+    );
 
     // watch change in fiat amount and recalculate fees on change
-    const fiatAmount = watch(FIAT_INPUT);
-    useEffect(() => {
-        if (!fiatAmount) return;
-        const currency: { value: string; label: string } | undefined = getValues(
-            FIAT_CURRENCY_SELECT,
-        );
-        if (!fiatRates || !fiatRates.current || !currency) return;
-        const cryptoValue = fromFiatCurrency(
-            fiatAmount,
-            currency.value,
-            fiatRates.current.rates,
-            network.decimals,
-        );
-        const origValue = getValues(OUTPUT_AMOUNT);
-        if (origValue === cryptoValue) return;
-        setValue(OUTPUT_AMOUNT, cryptoValue);
-        composeRequest(FIAT_INPUT);
-    }, [
-        fiatAmount,
-        cryptoAmount,
-        setValue,
-        getValues,
-        fiatRates,
-        composeRequest,
-        network.decimals,
-    ]);
+    const onFiatAmountChange = useCallback(
+        (amount: string) => {
+            if (!amount) return;
+            setValue(CRYPTO_INPUT, '');
+            setValue('setMaxOutputId', undefined);
+            clearErrors(CRYPTO_INPUT);
+            const currency: { value: string; label: string } | undefined = getValues(
+                FIAT_CURRENCY_SELECT,
+            );
+            if (!fiatRates || !fiatRates.current || !currency) return;
+            const cryptoValue = fromFiatCurrency(
+                amount,
+                currency.value.toLowerCase(),
+                fiatRates.current.rates,
+                network.decimals,
+            );
+            const origValue = getValues(OUTPUT_AMOUNT);
+            if (origValue === cryptoValue) return;
+            setValue(OUTPUT_AMOUNT, cryptoValue);
+            composeRequest(FIAT_INPUT);
+        },
+        [setValue, clearErrors, getValues, fiatRates, network.decimals, composeRequest],
+    );
 
     useEffect(() => {
         if (!composedLevels) return;
@@ -289,6 +291,8 @@ export const useCoinmarketSellForm = (props: Props): SellFormContextValues => {
         isLoading,
         noProviders,
         network,
+        onCryptoAmountChange,
+        onFiatAmountChange,
     };
 };
 

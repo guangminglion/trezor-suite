@@ -25,14 +25,13 @@ const FiatInput = ({ activeInput, setActiveInput }: Props) => {
         register,
         errors,
         control,
-        setValue,
-        clearErrors,
         formState,
         amountLimits,
         sellInfo,
         setAmountLimits,
         defaultCurrency,
         quotesRequest,
+        onFiatAmountChange,
     } = useCoinmarketSellFormContext();
 
     return (
@@ -98,10 +97,9 @@ const FiatInput = ({ activeInput, setActiveInput }: Props) => {
             onFocus={() => {
                 setActiveInput(FIAT_INPUT);
             }}
-            onChange={() => {
+            onChange={event => {
                 setActiveInput(FIAT_INPUT);
-                setValue(CRYPTO_INPUT, '');
-                clearErrors(CRYPTO_INPUT);
+                onFiatAmountChange(event.target.value);
             }}
             state={errors[FIAT_INPUT] ? 'error' : undefined}
             name={FIAT_INPUT}

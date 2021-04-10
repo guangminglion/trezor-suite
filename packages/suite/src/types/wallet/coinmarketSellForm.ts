@@ -71,4 +71,6 @@ export type SellFormContextValues = Omit<UseFormMethods<SellFormState>, 'registe
     noProviders: boolean;
     network: Network;
     feeInfo: FeeInfo;
+    onCryptoAmountChange: (amount: string) => void;
+    onFiatAmountChange: (amount: string) => void;
 };

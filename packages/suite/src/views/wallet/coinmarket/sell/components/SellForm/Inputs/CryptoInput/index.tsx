@@ -35,10 +35,9 @@ const CryptoInput = ({ activeInput, setActiveInput }: Props) => {
         account,
         network,
         control,
-        setValue,
-        clearErrors,
         formState,
         amountLimits,
+        onCryptoAmountChange,
     } = useCoinmarketSellFormContext();
 
     const uppercaseSymbol = account.symbol.toUpperCase();
@@ -52,9 +51,9 @@ const CryptoInput = ({ activeInput, setActiveInput }: Props) => {
             onFocus={() => {
                 setActiveInput(CRYPTO_INPUT);
             }}
-            onChange={() => {
-                setValue(FIAT_INPUT, '');
-                clearErrors(FIAT_INPUT);
+            onChange={event => {
+                setActiveInput(CRYPTO_INPUT);
+                onCryptoAmountChange(event.target.value);
             }}
             defaultValue=""
             state={errors[CRYPTO_INPUT] ? 'error' : undefined}
@@ -68,7 +67,6 @@ const CryptoInput = ({ activeInput, setActiveInput }: Props) => {
                             if (formState.isSubmitting) {
                                 return <Translation id="TR_SELL_VALIDATION_ERROR_EMPTY" />;
                             }
-
                             return;
                         }
 
