@@ -19,26 +19,43 @@ const Center = styled.div`
 
 const StyledButton = styled(Button)`
     min-width: 200px;
-    margin-left: 20px;
 `;
 
 const Footer = () => {
-    const { formState, watch, errors, isComposing } = useCoinmarketExchangeFormContext();
+    const {
+        formState,
+        watch,
+        errors,
+        isComposing,
+        isDeviceConnected,
+    } = useCoinmarketExchangeFormContext();
     const hasValues = !!watch(CRYPTO_INPUT) && !!watch('receiveCryptoSelect')?.value;
     const formIsValid = Object.keys(errors).length === 0;
 
     return (
-        <Wrapper>
-            <Center>
-                <StyledButton
-                    isDisabled={!(formIsValid && hasValues) || formState.isSubmitting}
-                    isLoading={formState.isSubmitting || isComposing}
-                    type="submit"
-                >
-                    <Translation id="TR_EXCHANGE_SHOW_OFFERS" />
-                </StyledButton>
-            </Center>
-        </Wrapper>
+        <>
+            <Wrapper>
+                <Center>
+                    <StyledButton
+                        isDisabled={
+                            (!(formIsValid && hasValues) || formState.isSubmitting) &&
+                            !isDeviceConnected
+                        }
+                        isLoading={formState.isSubmitting || isComposing}
+                        type="submit"
+                    >
+                        <Translation id="TR_EXCHANGE_SHOW_OFFERS" />
+                    </StyledButton>
+                </Center>
+            </Wrapper>
+            {!isDeviceConnected && (
+                <Wrapper>
+                    <Center>
+                        <Translation id="TR_EXCHANGE_CONNECT_DEVICE_TO_CONTINUE" />
+                    </Center>
+                </Wrapper>
+            )}
+        </>
     );
 };
 

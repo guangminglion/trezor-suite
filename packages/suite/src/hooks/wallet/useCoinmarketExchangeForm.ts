@@ -251,6 +251,8 @@ export const useCoinmarketExchangeForm = (props: Props): ExchangeFormContextValu
         }
     };
 
+    const isDeviceConnected = device?.connected ?? false;
+
     return {
         ...methods,
         account,
@@ -277,6 +279,7 @@ export const useCoinmarketExchangeForm = (props: Props): ExchangeFormContextValu
         isLoading,
         noProviders,
         network,
+        isDeviceConnected,
     };
 };
 

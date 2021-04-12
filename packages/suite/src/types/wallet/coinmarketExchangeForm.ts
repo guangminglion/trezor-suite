@@ -70,4 +70,5 @@ export type ExchangeFormContextValues = Omit<UseFormMethods<ExchangeFormState>, 
     noProviders: boolean;
     network: Network;
     feeInfo: FeeInfo;
+    isDeviceConnected: boolean;
 };
