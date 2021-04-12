@@ -104,5 +104,5 @@ export const useCoinmarketRecomposeAndSign = () => {
             translationString,
         ],
     );
-    return { recomposeAndSign };
+    return { selectedFee, composed, recomposeAndSign };
 };

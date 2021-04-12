@@ -81,6 +81,7 @@ export const getComposeAddressPlaceholder = async (
     account: Account,
     network: Network,
     device?: TrezorDevice,
+    accounts?: Account[],
 ) => {
     // the address is later replaced by the address of the sell
     // as a precaution, use user's own address as a placeholder
@@ -100,6 +101,13 @@ export const getComposeAddressPlaceholder = async (
                 ) ||
                 network;
             if (legacy && device) {
+                // try to get the already discovered legacy account
+                const legacyPath = `${legacy.bip44.replace('i', '0')}`;
+                const legacyAccount = accounts?.find(a => a.path === legacyPath);
+                if (legacyAccount?.addresses?.unused[0]) {
+                    return legacyAccount?.addresses?.unused[0].address;
+                }
+                // if it is not discovered, get an address from trezor
                 const result = await TrezorConnect.getAddress({
                     device,
                     coin: legacy.symbol,

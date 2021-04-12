@@ -26,7 +26,10 @@ import { FeeLevel } from 'trezor-connect';
 import { Trade } from '@wallet-types/coinmarketCommonTypes';
 
 export interface ComposedTransactionInfo {
-    composed?: PrecomposedTransactionFinal;
+    composed?: Pick<
+        PrecomposedTransactionFinal,
+        'feePerByte' | 'estimatedFeeLimit' | 'feeLimit' | 'token'
+    >;
     selectedFee?: FeeLevel['label'];
 }
 

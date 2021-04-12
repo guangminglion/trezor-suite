@@ -1,7 +1,7 @@
 import { createContext, useContext, useCallback, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ExchangeTradeQuoteRequest } from 'invity-api';
-import { useActions } from '@suite-hooks';
+import { useActions, useSelector } from '@suite-hooks';
 import invityAPI from '@suite-services/invityAPI';
 import { toFiatCurrency, fromFiatCurrency } from '@wallet-utils/fiatConverterUtils';
 import { getFeeLevels } from '@wallet-utils/sendFormUtils';
@@ -75,11 +75,15 @@ export const useCoinmarketExchangeForm = (props: Props): ExchangeFormContextValu
 
     const [state, setState] = useState<ReturnType<typeof useExchangeState>>(undefined);
 
+    const { accounts } = useSelector(state => ({
+        accounts: state.wallet.accounts,
+    }));
+
     // throttle initial state calculation
     const initState = useExchangeState(props, !!state);
     useEffect(() => {
         const setStateAsync = async (initState: ReturnType<typeof useExchangeState>) => {
-            const address = await getComposeAddressPlaceholder(account, network, device);
+            const address = await getComposeAddressPlaceholder(account, network, device, accounts);
             if (initState && address) {
                 initState.formValues.outputs[0].address = address;
                 setState(initState);
@@ -89,7 +93,7 @@ export const useCoinmarketExchangeForm = (props: Props): ExchangeFormContextValu
         if (!state && initState) {
             setStateAsync(initState);
         }
-    }, [state, initState, account, network, device]);
+    }, [state, initState, account, network, device, accounts]);
 
     const methods = useForm<ExchangeFormState>({
         mode: 'onChange',

@@ -54,7 +54,7 @@ export const useOffers = (props: Props) => {
         invityAPI.setInvityAPIServer(invityAPIUrl);
     }
 
-    const { recomposeAndSign } = useCoinmarketRecomposeAndSign();
+    const { selectedFee, composed, recomposeAndSign } = useCoinmarketRecomposeAndSign();
 
     useEffect(() => {
         if (!quotesRequest) {
@@ -96,7 +96,7 @@ export const useOffers = (props: Props) => {
 
     const doSellTrade = async (quote: SellFiatTrade) => {
         if (!quotesRequest) return;
-        const returnUrl = await createQuoteLink(quotesRequest, account);
+        const returnUrl = await createQuoteLink(quotesRequest, account, { selectedFee, composed });
         const response = await invityAPI.doSellTrade({ trade: quote, returnUrl });
         if (response) {
             if (response.trade.error) {

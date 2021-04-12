@@ -4,6 +4,8 @@ import { useActions } from '@suite-hooks';
 import * as routerActions from '@suite-actions/routerActions';
 import * as coinmarketBuyActions from '@wallet-actions/coinmarketBuyActions';
 import * as coinmarketSellActions from '@wallet-actions/coinmarketSellActions';
+import * as coinmarketCommonActions from '@wallet-actions/coinmarket/coinmarketCommonActions';
+import { FeeLevel } from 'trezor-connect';
 
 export const useCoinmarketRedirect = () => {
     const {
@@ -12,6 +14,7 @@ export const useCoinmarketRedirect = () => {
         saveBuyTransactionDetailId,
         saveSellQuoteRequest,
         setSellIsFromRedirect,
+        saveComposedTransactionInfo,
         goto,
     } = useActions({
         saveBuyQuoteRequest: coinmarketBuyActions.saveQuoteRequest,
@@ -19,6 +22,7 @@ export const useCoinmarketRedirect = () => {
         saveBuyTransactionDetailId: coinmarketBuyActions.saveTransactionDetailId,
         saveSellQuoteRequest: coinmarketSellActions.saveQuoteRequest,
         setSellIsFromRedirect: coinmarketSellActions.setIsFromRedirect,
+        saveComposedTransactionInfo: coinmarketCommonActions.saveComposedTransactionInfo,
         goto: routerActions.goto,
     });
 
@@ -42,9 +46,12 @@ export const useCoinmarketRedirect = () => {
         cryptoCurrency: string;
         amount: string;
         country: string;
+        selectedFee?: FeeLevel['label'];
+        feePerByte?: string;
+        feeLimit?: string;
     }
 
-    const redirectToOffers = async (params: OfferRedirectParams) => {
+    const redirectToOffers = (params: OfferRedirectParams) => {
         const {
             symbol,
             index,
@@ -71,12 +78,12 @@ export const useCoinmarketRedirect = () => {
                 fiatStringAmount: amount,
             };
         }
-        await saveBuyQuoteRequest(request);
-        await setBuyIsFromRedirect(true);
+        saveBuyQuoteRequest(request);
+        setBuyIsFromRedirect(true);
         goto('wallet-coinmarket-buy-offers', { symbol, accountIndex: index, accountType });
     };
 
-    const redirectToSellOffers = async (params: SellOfferRedirectParams) => {
+    const redirectToSellOffers = (params: SellOfferRedirectParams) => {
         const {
             symbol,
             index,
@@ -86,6 +93,9 @@ export const useCoinmarketRedirect = () => {
             cryptoCurrency,
             amount,
             country,
+            feeLimit,
+            feePerByte,
+            selectedFee,
         } = params;
         let request: SellFiatTradeQuoteRequest;
         const commonParams = { fiatCurrency, cryptoCurrency, country };
@@ -103,8 +113,13 @@ export const useCoinmarketRedirect = () => {
                 fiatStringAmount: amount,
             };
         }
-        await saveSellQuoteRequest(request);
-        await setSellIsFromRedirect(true);
+        saveSellQuoteRequest(request);
+        setSellIsFromRedirect(true);
+        const composed = {
+            feeLimit,
+            feePerByte: feePerByte || '',
+        };
+        saveComposedTransactionInfo({ selectedFee: selectedFee || 'normal', composed });
         goto('wallet-coinmarket-sell-offers', { symbol, accountIndex: index, accountType });
     };
 
@@ -115,10 +130,10 @@ export const useCoinmarketRedirect = () => {
         transactionId: string;
     }
 
-    const redirectToDetail = async (params: DetailRedirectParams) => {
+    const redirectToDetail = (params: DetailRedirectParams) => {
         const { transactionId } = params;
 
-        await saveBuyTransactionDetailId(transactionId);
+        saveBuyTransactionDetailId(transactionId);
         goto('wallet-coinmarket-buy-detail', {
             symbol: params.symbol,
             accountIndex: params.index,

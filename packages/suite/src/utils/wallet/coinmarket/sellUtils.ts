@@ -3,6 +3,7 @@ import { Account } from '@wallet-types';
 import { AmountLimits } from '@wallet-types/coinmarketSellForm';
 import { SellFiatTrade, SellFiatTradeQuoteRequest, SellTradeStatus } from 'invity-api';
 import { getLocationOrigin, isDesktop } from '@suite-utils/env';
+import { ComposedTransactionInfo } from '@wallet-reducers/coinmarketReducer';
 
 // loop through quotes and if all quotes are either with error below minimum or over maximum, return the limits
 export function getAmountLimits(
@@ -61,7 +62,11 @@ export function processQuotes(allQuotes: SellFiatTrade[]): [SellFiatTrade[], Sel
     return [quotes, alternativeQuotes];
 }
 
-export const createQuoteLink = async (request: SellFiatTradeQuoteRequest, account: Account) => {
+export const createQuoteLink = async (
+    request: SellFiatTradeQuoteRequest,
+    account: Account,
+    composedInfo: ComposedTransactionInfo,
+) => {
     const assetPrefix = process.env.assetPrefix || '';
     const locationOrigin = getLocationOrigin();
     let hash: string;
@@ -70,6 +75,15 @@ export const createQuoteLink = async (request: SellFiatTradeQuoteRequest, accoun
         hash = `qc/${request.country}/${request.fiatCurrency}/${request.cryptoStringAmount}/${request.cryptoCurrency}`;
     } else {
         hash = `qf/${request.country}/${request.fiatCurrency}/${request.fiatStringAmount}/${request.cryptoCurrency}`;
+    }
+    if (composedInfo.selectedFee && composedInfo.selectedFee !== 'normal') {
+        hash += `/${composedInfo.selectedFee}`;
+        if (composedInfo.selectedFee === 'custom') {
+            hash += `/${composedInfo.composed?.feePerByte}`;
+            if (composedInfo.composed?.feeLimit) {
+                hash += `/${composedInfo.composed?.feeLimit}`;
+            }
+        }
     }
 
     const params = `sell-offers/${account.symbol}/${account.accountType}/${account.index}/${hash}`;

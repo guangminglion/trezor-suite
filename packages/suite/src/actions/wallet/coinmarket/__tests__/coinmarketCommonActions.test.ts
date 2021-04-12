@@ -132,16 +132,7 @@ describe('Coinmarket Common Actions', () => {
         const info: ComposedTransactionInfo = {
             selectedFee: 'normal',
             composed: {
-                bytes: 1,
-                fee: '1234',
                 feePerByte: '13',
-                type: 'final',
-                transaction: {
-                    inputs: [],
-                    outputs: [],
-                },
-                totalSpent: '3333',
-                max: undefined,
             },
         };
 

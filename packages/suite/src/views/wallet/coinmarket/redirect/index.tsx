@@ -5,6 +5,7 @@ import { Account } from '@wallet-types';
 import { variables } from '@trezor/components';
 import { useCoinmarketRedirect } from '@wallet-hooks/useCoinmarketRedirect';
 import { Translation } from '@suite-components';
+import { FeeLevel } from 'trezor-connect';
 
 const Wrapper = styled.div`
     display: flex;
@@ -51,6 +52,9 @@ const CoinmarketRedirect = () => {
                 amount: params[7],
                 cryptoCurrency: params[8],
                 country: params[5],
+                selectedFee: params[9] as FeeLevel['label'],
+                feePerByte: params[10],
+                feeLimit: params[11],
             });
         }
 

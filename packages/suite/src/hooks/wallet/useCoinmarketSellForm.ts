@@ -1,7 +1,7 @@
 import { createContext, useContext, useCallback, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { SellFiatTradeQuoteRequest } from 'invity-api';
-import { useActions } from '@suite-hooks';
+import { useActions, useSelector } from '@suite-hooks';
 import invityAPI from '@suite-services/invityAPI';
 import regional from '@wallet-constants/coinmarket/regional';
 import { fromFiatCurrency } from '@wallet-utils/fiatConverterUtils';
@@ -77,11 +77,15 @@ export const useCoinmarketSellForm = (props: Props): SellFormContextValues => {
 
     const [state, setState] = useState<ReturnType<typeof useSellState>>(undefined);
 
+    const { accounts } = useSelector(state => ({
+        accounts: state.wallet.accounts,
+    }));
+
     // throttle initial state calculation
     const initState = useSellState(props, !!state);
     useEffect(() => {
         const setStateAsync = async (initState: ReturnType<typeof useSellState>) => {
-            const address = await getComposeAddressPlaceholder(account, network, device);
+            const address = await getComposeAddressPlaceholder(account, network, device, accounts);
             if (initState && address) {
                 initState.formValues.outputs[0].address = address;
                 setState(initState);
@@ -91,7 +95,7 @@ export const useCoinmarketSellForm = (props: Props): SellFormContextValues => {
         if (!state && initState) {
             setStateAsync(initState);
         }
-    }, [state, initState, account, network, device]);
+    }, [state, initState, account, network, device, accounts]);
 
     const methods = useForm<SellFormState>({
         mode: 'onChange',
