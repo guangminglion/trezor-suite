@@ -5552,6 +5552,15 @@ const definedMessages = defineMessages({
         id: 'TR_DEVICE_CONNECTED_WRONG_STATE',
         defaultMessage: 'Device detected, but there is a problem ',
     },
+    TR_ONBOARDING_COINS_STEP: {
+        id: 'TR_ONBOARDING_COINS_STEP',
+        defaultMessage: 'Activate Coins',
+    },
+    TR_ONBOARDING_COINS_STEP_DESCRIPTION: {
+        id: 'TR_ONBOARDING_COINS_STEP_DESCRIPTION',
+        defaultMessage:
+            'We preselected our 3 most popular, for which we’ll create accounts. U can always enable more later.',
+    },
 } as const);
 
 export default definedMessages;
