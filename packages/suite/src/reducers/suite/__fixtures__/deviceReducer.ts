@@ -545,7 +545,7 @@ const changed = [
                 type: DEVICE.CHANGED,
                 payload: getConnectDevice(undefined, {
                     unlocked: false,
-                    safety_checks: 'PromptAlways',
+                    safety_checks: null,
                 }),
             },
         ],
