@@ -23,6 +23,13 @@ const RadioButtonInner = styled.div`
 const WarningWrapper = styled.div`
     margin-bottom: 18px;
 `;
+
+/**
+ * A Modal that allows user to set the `safety_checks` feature of connected Trezor.
+ * Only supports setting it to `Strict` or `PromptTemporarily`.
+ * The third value, `PromptAlways`, is considered an advanced feature that can be
+ * set only via command line and trezor-lib.
+ */
 const SafetyChecks = (props: ModalProps) => {
     const device = useSelector(state => state.suite.device);
     const { applySettings } = useActions({ applySettings: deviceSettingsActions.applySettings });
@@ -65,7 +72,8 @@ const SafetyChecks = (props: ModalProps) => {
                 </RadioButton>
                 <RadioButton
                     value="PromptTemporarily"
-                    isChecked={level === 'PromptAlways' || level === 'PromptTemporarily'}
+                    // For the purpose of this modal consider `PromptAlways` as identical to `PromptTemporarily`.
+                    isChecked={level === 'PromptTemporarily' || level === 'PromptAlways'}
                     onClick={() => setLevel('PromptTemporarily')}
                 >
                     <RadioButtonInner>
