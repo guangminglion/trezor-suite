@@ -7,10 +7,25 @@ const pkg = require('../package.json');
 
 const electronSource = path.join(__dirname, '..', 'src-electron');
 const isDev = process.env.NODE_ENV !== 'production';
+const useMock = process.env.USE_MOCK !== undefined;
 
 const gitRevision = child_process.execSync('git rev-parse HEAD').toString().trim();
 const modulePath = path.join(electronSource, 'modules');
-const modules = glob.sync(`${modulePath}/**/*.ts`).map(m => `modules/${m.replace(modulePath, '')}`);
+const modules = glob.sync(`${modulePath}/**/*.ts`).map(m => `modules${m.replace(modulePath, '')}`);
+
+const mockPath = path.join(electronSource, 'mocks');
+const mocks = {
+    'electron-updater': path.join(mockPath, 'electron-updater.ts'),
+};
+const mockFilter = new RegExp(`^${Object.keys(mocks).join('|')}$`);
+const mockPlugin = {
+    name: 'mock-plugin',
+    setup: build => {
+        build.onResolve({ filter: mockFilter }, args => ({
+            path: mocks[args.path],
+        }));
+    },
+};
 
 console.log('[Electron Build] Starting...');
 const hrstart = process.hrtime();
@@ -30,6 +45,7 @@ build({
     define: {
         'process.env.COMMITHASH': JSON.stringify(gitRevision),
     },
+    plugins: isDev || useMock ? [mockPlugin] : [],
 })
     .then(() => {
         const hrend = process.hrtime(hrstart);
