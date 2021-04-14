@@ -1,0 +1,24 @@
+TODOs:
+- Make data analytics skippable (show only on initial run, don't show for manually triggered onboarding for a new device)
+- Integrate intermediary firmware
+- Check first few steps and put back usage of Onboarding.Button.Cta/Alt/Back
+- Fix separate modal flows for backup, recovery, fw update and fix them
+- check-seed step is probably still useful, but maybe it can be handled directly in Firmware update component
+- Welcome screen should be used separately
+- Welcome step: 
+    - security check, hologram tooltip
+- Firmware step:
+    - device disconnected should reuse connect device prompt
+    - fake animation of progress bar for T1
+    - Tooltip design for changelog
+    - Animations for connecting/disconnecting device modals
+    - separate flows needs to be able to show pin matrix
+- Backup step:
+    - missing proper icons for instructions what user should not do with a seed
+- Recovery step:
+    - Word select/inputs design (T1)
+    - Advanced recovery matrix design
+- PIN step:
+    - PIN matrix redesign
+    - Share pin matrix component with Pin modal used in Suite
+    
