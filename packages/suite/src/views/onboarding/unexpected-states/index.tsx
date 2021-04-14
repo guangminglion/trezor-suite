@@ -1,10 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { P } from '@trezor/components';
-import { connect } from 'react-redux';
 
 import { AppState } from '@suite-types';
-import { Translation } from '@suite-components/Translation';
+import { Translation, PinMatrix } from '@suite-components';
 import { DeviceRecoveryMode } from '@suite-views';
 import * as STEP from '@onboarding-constants/steps';
 import steps from '@onboarding-config/steps';
@@ -14,32 +13,31 @@ import IsSameDevice from './components/IsSameDevice';
 import IsNotNewDevice from './components/IsNotNewDevice';
 import DeviceIsUsedHere from './components/DeviceIsUsedHere';
 import { isWebUSB } from '@suite-utils/transport';
+import { useOnboarding, useSelector } from '@suite-hooks';
+import { UI } from 'trezor-connect';
+import PinInvalid from '@suite/components/suite/modals/PinInvalid';
+import { ConnectDevicePrompt } from '@suite/components/onboarding';
+import { OnboardingStepBox } from '@suite/components/firmware';
 
 const Wrapper = styled.div`
-    height: 100%;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 40px;
 `;
 
 const IsInBootloader = () => (
-    <P>
-        <Translation id="TR_CONNECTED_DEVICE_IS_IN_BOOTLOADER" />
-    </P>
+    <OnboardingStepBox
+        disableConfirmWrapper
+        description={<Translation id="TR_CONNECTED_DEVICE_IS_IN_BOOTLOADER" />}
+    />
 );
 
-const mapStateToProps = (state: AppState) => ({
-    onboarding: state.onboarding,
-    suite: state.suite,
-});
-
-type Props = ReturnType<typeof mapStateToProps> & {
-    children: React.ReactNode;
-};
-
-const UnexpectedState = ({ onboarding, suite, children }: Props) => {
-    const { prevDevice, path, activeStepId } = onboarding;
-    const { device, transport } = suite;
+const UnexpectedState = ({ children }: { children: JSX.Element }) => {
+    const { device, transport } = useSelector(s => s.suite);
+    const modal = useSelector(s => s.modal);
+    const { prevDevice, path, activeStepId } = useOnboarding();
     const activeStep = steps.find(s => s.id === activeStepId);
-
     const isNotSameDevice = () => {
         const prevDeviceId = prevDevice && prevDevice.features && prevDevice.id;
         // if no device was connected before, assume it is same device
@@ -51,13 +49,6 @@ const UnexpectedState = ({ onboarding, suite, children }: Props) => {
             return null;
         }
         return deviceId !== prevDeviceId;
-    };
-
-    const isNotNewDevice = () => {
-        if (!device || !path || !path.includes('new')) {
-            return null;
-        }
-        return device && device.features && device.features.firmware_present !== false;
     };
 
     if (!activeStep) {
@@ -74,8 +65,7 @@ const UnexpectedState = ({ onboarding, suite, children }: Props) => {
                 return device?.features && device.mode === 'bootloader';
             case STEP.DISALLOWED_DEVICE_IS_NOT_USED_HERE:
                 return device?.type === 'unacquired';
-            case STEP.DISALLOWED_DEVICE_IS_NOT_NEW_DEVICE:
-                return isNotNewDevice();
+
             case STEP.DISALLOWED_DEVICE_IS_IN_RECOVERY_MODE:
                 return device?.features?.recovery_mode;
             default:
@@ -97,17 +87,58 @@ const UnexpectedState = ({ onboarding, suite, children }: Props) => {
                 return <IsInBootloader />;
             case STEP.DISALLOWED_DEVICE_IS_NOT_USED_HERE:
                 return <DeviceIsUsedHere />;
-            case STEP.DISALLOWED_DEVICE_IS_NOT_NEW_DEVICE:
-                return <IsNotNewDevice />;
             case STEP.DISALLOWED_DEVICE_IS_IN_RECOVERY_MODE:
-                return <DeviceRecoveryMode modalProps={{ noBackground: true, size: 'small' }} />;
+                // I don't know how this case could be triggered (and right now I don't believe it can be), thus design is ugly.
+                // To whoever find this in the future and will need to implement proper design, I am sorry.
+                return (
+                    <OnboardingStepBox
+                        disableConfirmWrapper
+                        heading={<Translation id="TR_DEVICE_IN_RECOVERY_MODE" />}
+                    />
+                );
             default:
                 return null;
         }
     };
 
+    const getPinComponent = () => {
+        // After the PIN is set it may happen that it takes too long for an user to finish the onboarding process.
+        // Then the device will get auto locked and requests to show a PIN matrix next before changing its setting.
+        // (which could happen on Final step where we set device name and homescreen)
+        if (!device?.features) return null;
+        if (activeStepId === 'set-pin') return null; // Step for setting up a PIN handles all by itself
+        const showPinMatrix =
+            modal.context === '@modal/context-device' && modal.windowType === UI.REQUEST_PIN;
+        if (showPinMatrix) {
+            return <PinMatrix device={device} />;
+        }
+    };
+
+    const pinComponent = getPinComponent();
     const unexpectedState = getUnexpectedStateComponent();
-    return <Wrapper>{unexpectedState || children}</Wrapper>;
+    if (pinComponent) {
+        return (
+            <OnboardingStepBox
+                heading={<Translation id="TR_ENTER_PIN" />}
+                confirmOnDevice={device?.features?.major_version === 1 ? 1 : 2}
+            >
+                {pinComponent}
+            </OnboardingStepBox>
+        );
+    }
+    if (unexpectedState) {
+        return (
+            <Wrapper>
+                <ConnectDevicePrompt connected={!!device?.connected} showWarning>
+                    {disallowedState === 'device-is-not-connected' ? (
+                        <Translation id="TR_RECONNECT_HEADER" />
+                    ) : undefined}
+                </ConnectDevicePrompt>
+                {unexpectedState}
+            </Wrapper>
+        );
+    }
+    return children;
 };
 
-export default connect(mapStateToProps, {})(UnexpectedState);
+export default UnexpectedState;
