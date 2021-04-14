@@ -21,7 +21,10 @@ import {
     OUTPUT_AMOUNT,
     FIAT_CURRENCY_SELECT,
 } from '@wallet-types/coinmarketSellForm';
-import { getComposeAddressPlaceholder } from '@wallet-utils/coinmarket/coinmarketUtils';
+import {
+    getComposeAddressPlaceholder,
+    mapTestnetSymbol,
+} from '@wallet-utils/coinmarket/coinmarketUtils';
 import { getAmountLimits, processQuotes } from '@wallet-utils/coinmarket/sellUtils';
 import { useFees } from './form/useFees';
 import { useCompose } from './form/useCompose';
@@ -72,7 +75,8 @@ export const useCoinmarketSellForm = (props: Props): SellFormContextValues => {
     const coinFees = fees[symbol];
     const levels = getFeeLevels(networkType, coinFees);
     const feeInfo = { ...coinFees, levels };
-    const fiatRates = fiat.coins.find(item => item.symbol === symbol);
+    const symbolForFiat = mapTestnetSymbol(symbol);
+    const fiatRates = fiat.coins.find(item => item.symbol === symbolForFiat);
     const localCurrencyOption = { value: localCurrency, label: localCurrency.toUpperCase() };
 
     const [state, setState] = useState<ReturnType<typeof useSellState>>(undefined);
@@ -189,6 +193,7 @@ export const useCoinmarketSellForm = (props: Props): SellFormContextValues => {
                 FIAT_CURRENCY_SELECT,
             );
             if (!fiatRates || !fiatRates.current || !currency) return;
+
             const cryptoValue = fromFiatCurrency(
                 amount,
                 currency.value.toLowerCase(),

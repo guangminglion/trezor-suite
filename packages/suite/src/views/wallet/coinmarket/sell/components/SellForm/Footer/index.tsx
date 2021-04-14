@@ -83,6 +83,7 @@ const Footer = () => {
         setAmountLimits,
         defaultCountry,
         quotesRequest,
+        isComposing,
     } = useCoinmarketSellFormContext();
     const countrySelect = 'countrySelect';
     const hasValues =
@@ -146,7 +147,7 @@ const Footer = () => {
             <Right>
                 <StyledButton
                     isDisabled={!(formIsValid && hasValues) || formState.isSubmitting}
-                    isLoading={formState.isSubmitting}
+                    isLoading={formState.isSubmitting || isComposing}
                     type="submit"
                 >
                     <Translation id="TR_SELL_SHOW_OFFERS" />

@@ -128,3 +128,10 @@ export const getComposeAddressPlaceholder = async (
         // no default
     }
 };
+
+export const mapTestnetSymbol = (symbol: Network['symbol']) => {
+    if (symbol === 'test') return 'btc';
+    if (symbol === 'trop') return 'eth';
+    if (symbol === 'txrp') return 'xrp';
+    return symbol;
+};

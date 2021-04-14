@@ -37,17 +37,17 @@ const Bottom = () => {
         network,
         setValue,
         clearErrors,
+        onCryptoAmountChange,
     } = useCoinmarketSellFormContext();
 
     const setRatioAmount = (divisor: number) => {
-        setValue('setMaxOutputId', undefined);
         const amount = new BigNumber(account.formattedBalance)
             .dividedBy(divisor)
             .decimalPlaces(network.decimals)
             .toString();
         setValue(CRYPTO_INPUT, amount);
-        setValue(FIAT_INPUT, '');
-        clearErrors([FIAT_INPUT, CRYPTO_INPUT]);
+        clearErrors([CRYPTO_INPUT]);
+        onCryptoAmountChange(amount);
     };
 
     return (
