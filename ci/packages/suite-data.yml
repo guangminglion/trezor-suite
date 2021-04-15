@@ -3,12 +3,13 @@ msg-system config validation:
   script:
     - yarn workspace @trezor/suite-data msg-system-validate-config
 
-# TODO: except codesign and release, or only develop?
 msg-system config sign dev:
   stage: build
   except:
     - codesign
-    - release
+  only:
+    changes:
+      - packages/suite-data/src/message-system
   variables:
     # base64 encoded PRIVATE_KEY
     PRIVATE_KEY: LS0tLS1CRUdJTiBFQyBQQVJBTUVURVJTLS0tLS0KQmdVcmdRUUFDZz09Ci0tLS0tRU5EIEVDIFBBUkFNRVRFUlMtLS0tLQotLS0tLUJFR0lOIEVDIFBSSVZBVEUgS0VZLS0tLS0KTUhRQ0FRRUVJQ1cya0xCbklBNlhPdE0xa1lyeDFPWFhDUFJ1WnNoNlRQZGJ2ekMzL1lRem9BY0dCU3VCQkFBSwpvVVFEUWdBRTc3YlpSQXN6aGhsQ3FKRG9rY3ZqbFhPUFBQUm5BT2grWmt4WkR1bzc1T0FtUlpGVUp0YjNqWlFyCkxSaE1hL1l3T2pVSGdTYTM1MEdJaTVMNW9KNTkrQT09Ci0tLS0tRU5EIEVDIFBSSVZBVEUgS0VZLS0tLS0
@@ -20,6 +21,9 @@ msg-system config sign:
   stage: build
   only:
     - codesign
+    changes:
+      - packages/suite-data/src/message-system
+
   variables:
     # base64 encoded PRIVATE_KEY (TODO: production key)
     PRIVATE_KEY: LS0tLS1CRUdJTiBFQyBQQVJBTUVURVJTLS0tLS0KQmdVcmdRUUFDZz09Ci0tLS0tRU5EIEVDIFBBUkFNRVRFUlMtLS0tLQotLS0tLUJFR0lOIEVDIFBSSVZBVEUgS0VZLS0tLS0KTUhRQ0FRRUVJQ1cya0xCbklBNlhPdE0xa1lyeDFPWFhDUFJ1WnNoNlRQZGJ2ekMzL1lRem9BY0dCU3VCQkFBSwpvVVFEUWdBRTc3YlpSQXN6aGhsQ3FKRG9rY3ZqbFhPUFBQUm5BT2grWmt4WkR1bzc1T0FtUlpGVUp0YjNqWlFyCkxSaE1hL1l3T2pVSGdTYTM1MEdJaTVMNW9KNTkrQT09Ci0tLS0tRU5EIEVDIFBSSVZBVEUgS0VZLS0tLS0
