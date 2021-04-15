@@ -30,20 +30,20 @@ const callbacks = {
 };
 
 /**
- * The parameter `--mock-update-available=DELAY` will pretend that a new update is
- * available for a given delay. This is disabled by default and can be enabled with
+ * The parameter `--mock-trigger-updater-after=DELAY` will pretend that a new update
+ * is available for a given delay. This is disabled by default and can be enabled with
  * any value starting from 0 (available at start) to the delay in seconds before the
  * update should be available.
  */
-const updateAvailableDelay = Number(
-    app.commandLine.getSwitchValue('mock-update-available') || '-1',
+const triggerUpdateAfter = Number(
+    app.commandLine.getSwitchValue('mock-trigger-updater-after') || '-1',
 );
 
-let updateAvailable = updateAvailableDelay === 0;
-if (updateAvailableDelay > 0) {
+let updateAvailable = triggerUpdateAfter === 0;
+if (triggerUpdateAfter > 0) {
     setTimeout(() => {
         updateAvailable = true;
-    }, 1000 * updateAvailableDelay);
+    }, 1000 * triggerUpdateAfter);
 }
 
 const autoUpdater = {
